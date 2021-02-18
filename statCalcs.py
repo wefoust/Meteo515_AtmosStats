@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb 11 14:24:51 2021
-
-@author: wef5056
+A module to complete statistical calculations
 """
-import matplotlib.pyplot  as plt
 import numpy as np
-from sklearn.neighbors import KernelDensity
-
 
 def basicStats(data):
     """ A function that ingests an 1-D Xarray dimension and

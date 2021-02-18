@@ -12,7 +12,7 @@ import statCalcs
 import statPlots
 
 def getRange(input,min,max):
-    """ This function gets range of values"""
+    """ This function gets a range values"""
     value = input.where(input > min,drop=True)
     value = value.where(value < max,drop=True)
     return value
@@ -95,19 +95,37 @@ tmaxConfig = dict(color='r',)
 tminConfig = dict(color='b')
 pcpConfig = dict(color='g')
 
-ax1.boxplot(Tmax_list,positions=[1,4,7,10],widths=0.5,boxprops=tmaxConfig)
-ax1.boxplot(Tmin_list,positions=[1.55,4.55,7.55,10.55],widths=0.5,boxprops=tminConfig)
+box1 = ax1.boxplot(Tmax_list,positions=[1,4,7,10],
+                                        widths=0.5,
+                                        boxprops=tmaxConfig)
+box2 = ax1.boxplot(Tmin_list,positions=[1.55,4.55,7.55,10.55],
+                                        widths=0.5,
+                                        boxprops=tminConfig)
+ax1.set_ylabel('Temperature ($^\circ$F)')
 
 ax2 = ax1.twinx()
-ax2.boxplot(PCP_list,positions=[2.05,5.05,8.05,11.05],boxprops=pcpConfig)
+box3 = ax2.boxplot(PCP_list,positions=[2.05,5.05,8.05,11.05],
+                                boxprops=pcpConfig)
+
 ax2.set_xticks([1.5,4.5,7.5,10.5])
 ax2.set_xticklabels(['DJF','MAM','JJA','SON'])
-ax2.set_ylabel('inches/day')
+ax2.set_ylabel('Precip (inches/day)')
 ax2.set_title('Daily Temperature and Precipitation')
+
+ax1.legend([box1['boxes'][0],box2['boxes'][0],box3['boxes'][0]],
+           ['Tmax','Tmin','PCP'])
+
+#Saving figure
+figure1.savefig('HW1_SchematicPlot.png',
+                bbox_inches='tight',
+                dpi=200)
+
 
 
 """
-#PDF Loop
+This section creates a figure containing 5 histograms with KDFs overlayed
+"""
+
 fig=plt.figure()
 ax1 = plt.subplot2grid(shape=(2,6), loc=(0,0), colspan=2)
 ax2 = plt.subplot2grid(shape=(2,6), loc=(0,2), colspan=2)
@@ -115,11 +133,12 @@ ax3 = plt.subplot2grid(shape=(2,6), loc=(0,4), colspan=2)
 ax4 = plt.subplot2grid(shape=(2,6), loc=(1,1), colspan=2)
 ax5 = plt.subplot2grid(shape=(2,6), loc=(1,3), colspan=2)
 
-ax1.set_title('h=0.5')
-ax2.set_title('h=1')
-ax3.set_title('h=2')
-ax4.set_title('h=5')
-ax5.set_title('h=10')
+ax1.set_title('w/h=0.5')
+ax2.set_title('w/h=1')
+ax3.set_title('w/h=2')
+ax4.set_title('w/h=5')
+ax5.set_title('w/h=10')
+
 
 
 
@@ -135,11 +154,18 @@ statPlots.getKDF(data['Tmax'],ax2,kernel='gaussian',bandwidth=1.0)
 statPlots.getKDF(data['Tmax'],ax3,kernel='gaussian',bandwidth=2.0)
 statPlots.getKDF(data['Tmax'],ax4,kernel='gaussian',bandwidth=5.0)
 statPlots.getKDF(data['Tmax'],ax5,kernel='gaussian',bandwidth=10.)
+ax5.set_ylim(0,.045)
+ax2.set_ylim(0,.025)
+ax3.set_ylim(0,.025)
+ax4.set_ylim(0,.025)
+ax5.set_ylim(0,.025)
 
-fig.suptitle('Kernal Density Functions')
-fig.text(0.53,0.00,'Temperature',ha='center')
+fig.suptitle('Tmax Histograms and KDFs')
+fig.text(0.53,0.00,'Temperature ($^\circ$F)',ha='center')
 fig.text(0.00,0.50,'Frequency Density',va='center',rotation='vertical')
 
 plt.tight_layout()
-"""
+fig.savefig('HW1_KDF_Plot.png',
+            bbox_inches='tight',
+            dpi=250)
 
