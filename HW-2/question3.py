@@ -31,10 +31,6 @@ precip20862099=dataset2.where(mask,drop=True)['PRECT']*1000*60*60*24
 lats = dataset1.where(mask,drop=True)['lat']
 lons = dataset1.where(mask,drop=True)['lon']
 
-#precip20062019.where(mask,drop=True)
-#precip20862099.where(mask,drop=True)
-
-
 Conus20102019 = precip20062019.sel(time = slice("2010-01-01",None))                                   
 Conus20902099 = precip20862099.sel(time = slice("2090-01-01",None))
 DJF20102019 = Conus20102019.where(Conus20102019.time.dt.season.isin(['DJF']),drop=True)
@@ -129,7 +125,6 @@ ax[0].contourf(lons,lats,DJFDiff,
 ax[0].contourf(lons,lats,medianHatchRgn,
                  levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
                  hatches = ["","","",'','','xx','xx'],
-                 #facecolor='None',
                  colors = 'None',
                  transform=ccrs.PlateCarree())
 
@@ -140,10 +135,6 @@ ax[0].add_feature(cfeature.STATES,
                     zorder=1, 
                     linewidth=1.5, 
                     edgecolor='k')
-
-
-
-
 
 ax[1].contourf(lons,lats,DJFDiffquantiles,
                  cmap=colors,
