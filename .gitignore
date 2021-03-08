@@ -1,5 +1,10 @@
-__pycache__/
-*.xlsx
-test.py
 .ipynb_checkpoints/
+HW-1/__pycache__/
+HW-1/*.xlsx
+HW-1/test.py
+HW-1/.ipynb_checkpoints/
+
+HW-2/__pycache__/
+HW-2/*.nc
+HW-2/alt*.py
 
