@@ -82,7 +82,16 @@ for i in np.arange(0,3):
 fig.savefig('HW2_3B_Plot.png',
             bbox_inches='tight',
             dpi=250)        
-#%%
+#%% Calculating Significance
+""" This section calculates whether the differences in median and IQR are 
+    significant. This is done by concatenating the 2010's and 2090's datasets.
+    The code then permutes the concatenated data into two equal datasets. The
+    IQR and median of each dataset are calculated and the differences in IQRs 
+    and medians are appended to the list diffMedian and diffIQR. This process
+    is repreated 1000 times. Aftwards the 97.5 percentile is calculated from 
+    the appended arrays. If the 2010 and 2090 difference in median and IQR are
+    greater than the 97.5 percentiles, then the difference is significant"""
+    
 concatData = xr.concat([Conus20102019,Conus20902099],dim='time')
 loop = 1000
 diffMedian = []
@@ -107,27 +116,25 @@ sigIQR = np.percentile(diffIQR,.975,axis=0)
 medianHatchRgn = DJFDiff-sigMedian
 IQRHatchRgn = DJFDiffquantiles-sigIQR
 
-#%% Last Plots
+#%% Creating figures with hatching
 fig, ax = plt.subplots(1,2,subplot_kw={'projection': ccrs.PlateCarree()})
-#"""
+
+
+ax[0].contourf(lons,lats,DJFDiff,
+               cmap=colors,
+               levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
+               transform=ccrs.PlateCarree())
+
+#Significance overlay
 ax[0].contourf(lons,lats,medianHatchRgn,
-                 cmap=colors,
                  levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
                  hatches = ["","","",'','','xx','xx'],
-                 facecolor=None,
+                 #facecolor='None',
+                 colors = 'None',
                  transform=ccrs.PlateCarree())
-#"""
 
-#"""
-ax[0].contourf(lons,lats,DJFDiff,
-                 cmap=colors,
-                 levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
-                 #facecolor = None,
-                 transform=ccrs.PlateCarree())
-#"""
-
-fig.colorbar(figure,ax=ax[0],orientation='horizontal',aspect=12.1,shrink=1)
-ax[0].set_title('Median Sig')
+fig.colorbar(figure,ax=ax[0],orientation='horizontal',pad=.05,aspect=12.1,shrink=1)
+ax[0].set_title('Difference in Median Precip \n (mm/day)')
 ax[0].coastlines()
 ax[0].add_feature(cfeature.STATES, 
                     zorder=1, 
@@ -135,20 +142,28 @@ ax[0].add_feature(cfeature.STATES,
                     edgecolor='k')
 
 
-ax[1].contourf(lons,lats,IQRHatchRgn,
+
+
+
+ax[1].contourf(lons,lats,DJFDiffquantiles,
                  cmap=colors,
-                 levels=[-1,-.5,0,.5,1],
-                 hatches = ["","","xx",'xx','xx'],
+                 levels=[-4,-3,-2,-1,0,1,2,3,4],
                  transform=ccrs.PlateCarree())
-fig.colorbar(figure,ax=ax[1],orientation='horizontal',aspect=12.1,shrink=1)
-ax[1].set_title('IQR Sig')
+
+ax[1].contourf(lons,lats,IQRHatchRgn,
+                 levels=[-4,-3,-2,-1,0,1,2,3,4],
+                 hatches = ['','','','','','','xx','xx','xx'],
+                 colors='None',
+                 transform=ccrs.PlateCarree())
+
+fig.colorbar(figure,ax=ax[1],orientation='horizontal',pad=.05,aspect=12.1,shrink=1)
+ax[1].set_title('Difference in Precip IQR \n (mm/day)')
 ax[1].coastlines()
 ax[1].add_feature(cfeature.STATES, 
                     zorder=1, 
                     linewidth=1.5, 
                     edgecolor='k')
-
 plt.tight_layout()
-#fig.savefig('HW2_3D_Plot.png',
-#            bbox_inches='tight',
-#            dpi=250)
+fig.savefig('HW2_3D_Plot.png',
+            bbox_inches='tight',
+            dpi=250)
