@@ -113,7 +113,7 @@ data = [PCPDaily[~np.isnan(PCPDaily)],
         PCPMonthly[~np.isnan(PCPMonthly)]]
 
 Chi2 = []
-for i in np.arrange(0,len(data)):
+for i in np.arange(0,len(data)):
     percntVals = np.percentile(data[i],percentiles)
     Counts,rightedgs = np.histogram(data[i],bins=percntVals)
     Z = (percntVals-np.nanmean(data[i]))/np.nanstd(data[i])
