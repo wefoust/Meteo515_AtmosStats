@@ -94,29 +94,30 @@ ax[2].set_title('Monthly Precip')
 plt.tight_layout()
 
 
-#%% Question 1C)
-numbins = 10
-histrange = [-2.5, 2.5]
-#Getting counts of histograms and position of bin edges
-CountsDaily,rightedgs = np.histogram(PCPDailyStd,bins=numbins,range=histrange)
-Counts5day,rightedgs = np.histogram(PCP5dayStd,bins=numbins,range=histrange)
-CountsMonthly,rightedgs = np.histogram(PCPMonthlyStd,bins=numbins,range=histrange)
+#%% Question 3
+""" This code tests the Goodness of fit for the Daily, 5-day, and monthly
+    precip datasets to a gaussian fit. This code creates bins based on 
+    0-20, 20-40, 40-60, 60-80, and 80-100 percentile of each dataset. It 
+    then calcualtes the Z score at each bin edge. The Z score is used to find
+    the area under a standard normal curve. The area*count of each bin is the 
+    expectency. The counts are then converted to frequencies. The frequencies 
+    and counts are then used as parameters for the chisquare function where it
+    returns a multi-dimensional list containing Chi2 values and P values. 
+    If P value is less than alpha (.05 in this case) then we reject
+    the null and conclude that the distribution is NOT normal. 
+"""    
 
-#Converting Counts to Frequencies
-FreqDaily = np.ndarray.tolist(np.divide(CountsDaily,sum(CountsDaily)))
-Freq5day = np.ndarray.tolist(np.divide(Counts5day,sum(Counts5day)))
-FreqMonthly = np.ndarray.tolist(np.divide(CountsMonthly,sum(CountsMonthly)))
+percentiles = [0,20,40,60,80,100]
+data = [PCPDaily[~np.isnan(PCPDaily)],
+        PCP5day[~np.isnan(PCP5day)],
+        PCPMonthly[~np.isnan(PCPMonthly)]]
 
-#Calculating expectencies. This will be the same for all cases 
-#since data is standardized and bin widths and edges are equal.
-Expectency = np.zeros(numbins)
-for i in np.arange(1,numbins-1,1):
-    print(i)
-    Expectency[i] = abs(norm.cdf(abs(rightedgs[i])) - norm.cdf(abs(rightedgs[i-1])))
-Expectency[0] = norm.cdf(histrange[0]) 
-Expectency[numbins-1] = 1 - norm.cdf(histrange[0]) 
-
-#Calulating Chi2 and P values
-Chi2Daily = chisquare(FreqDaily,f_exp=Expectency)
-Chi25day = chisquare(Freq5day,f_exp=Expectency)
-Chi2Monthly = chisquare(FreqMonthly,f_exp=Expectency)
+Chi2 = []
+for i in np.arrange(0,len(data)):
+    percntVals = np.percentile(data[i],percentiles)
+    Counts,rightedgs = np.histogram(data[i],bins=percntVals)
+    Z = (percntVals-np.nanmean(data[i]))/np.nanstd(data[i])
+    areas =Z[1:]-Z[:-1]
+    expectency = np.multiply(Counts,areas)
+    FreqDaily = np.ndarray.tolist(np.divide(Counts,sum(Counts)))
+    Chi2.append(chisquare(FreqDaily,f_exp=expectency))
