@@ -57,8 +57,6 @@ titles = [['2010-2019 Median','2090-2099 Median','2090-2099 Diff'],
 fig, ax = plt.subplots(3,2,subplot_kw={'projection': ccrs.PlateCarree()})
 for i in np.arange(0,3):
     for j in np.arange(0,2):
-        print('I value is ',i)
-        print('J value is ',j)
         if i == 2:
             colors = 'bwr'
         else:
@@ -108,23 +106,33 @@ diffIQR = np.asarray(diffIQR)
 
 sigMedian = np.percentile(diffMedian,.975,axis=0)
 sigIQR = np.percentile(diffIQR,.975,axis=0)
+sigMedian_lower = np.percentile(diffMedian,.025,axis=0)
+sigIQR_lower = np.percentile(diffIQR,.025,axis=0)
 
 medianHatchRgn = DJFDiff-sigMedian
 IQRHatchRgn = DJFDiffquantiles-sigIQR
 
+medianHatch_lower = DJFDiff-np.absolute(sigMedian_lower)
+IQRHatchRgn_lower = DJFDiffquantiles-np.absolute(sigIQR_lower)
 #%% Creating figures with hatching
 fig, ax = plt.subplots(1,2,subplot_kw={'projection': ccrs.PlateCarree()})
 
 
 ax[0].contourf(lons,lats,DJFDiff,
                cmap=colors,
-               levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
+               levels=np.linspace(-2.5,2.5,11),
                transform=ccrs.PlateCarree())
 
 #Significance overlay
+ax[0].contourf(lons,lats,medianHatch_lower,
+                 levels=np.linspace(-2.5,2.5,11),
+                 hatches = ["xx","xx","xx",'xx','','','','','','',''],
+                 colors = 'None',
+                 transform=ccrs.PlateCarree())
+
 ax[0].contourf(lons,lats,medianHatchRgn,
-                 levels=[-2,-1.5,-1,-.5,0,.5,1,1.5,2],
-                 hatches = ["","","",'','','xx','xx'],
+                 levels=np.linspace(-2.5,2.5,11),
+                 hatches = ["","","",'','','','xx','xx','xx','xx','xx'],
                  colors = 'None',
                  transform=ccrs.PlateCarree())
 
@@ -138,13 +146,19 @@ ax[0].add_feature(cfeature.STATES,
 
 ax[1].contourf(lons,lats,DJFDiffquantiles,
                  cmap=colors,
-                 levels=[-4,-3,-2,-1,0,1,2,3,4],
+                 levels=np.linspace(-4,4,11),
                  transform=ccrs.PlateCarree())
 
 ax[1].contourf(lons,lats,IQRHatchRgn,
-                 levels=[-4,-3,-2,-1,0,1,2,3,4],
-                 hatches = ['','','','','','','xx','xx','xx'],
+                 levels=np.linspace(-4,4,11),
+                 hatches = ["","","",'','','','xx','xx','xx','xx','xx'],
                  colors='None',
+                 transform=ccrs.PlateCarree())
+
+ax[1].contourf(lons,lats,IQRHatchRgn_lower,
+                 levels=np.linspace(-4,4,11),
+                 hatches = ["xx","xx","xx",'','','','','','','',''],
+                 colors = 'None',
                  transform=ccrs.PlateCarree())
 
 fig.colorbar(figure,ax=ax[1],orientation='horizontal',pad=.05,aspect=12.1,shrink=1)
