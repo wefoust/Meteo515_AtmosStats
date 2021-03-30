@@ -30,7 +30,7 @@ header = ['Year', 'January','Febuary', 'March','April',
           'May','June','July','August',
           'September','October','November','December']
 dataCSV = 'nina34.data.climatedatacenter.csv'
-df = pd.read_csv(dataCSV,delim_whitespace=True,names=header)
+df = pd.read_csv(dataCSV,delim_whitespace=False,names=header)
 df['Date'] = pd.to_datetime(df['Year'],format = '%Y')
 df = df.set_index(['Date'])
 
