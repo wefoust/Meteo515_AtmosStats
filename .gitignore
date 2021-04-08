@@ -9,3 +9,7 @@ HW-2/*.nc
 HW-2/alt*.py
 
 HW-3/*.nc
+
+HW-4/__pycache__/   
+HW-4/nina34.data.climatedatacenter.txt
+HW-4/backup/
